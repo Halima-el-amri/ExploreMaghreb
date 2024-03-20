@@ -1,18 +1,33 @@
 eureka:
+  instance:
+    hostname: localhost
   client:
-    register-with-eureka: false
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
 server:
   port: 8888
 spring:
+  main:
+    web-application-type: reactive
   application:
     name: gateway
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:7080/realms/Explore/protocol/openid-connect/certs
   cloud:
     gateway:
-      discovery:
-        locator:
-          enabled: true
       routes:
         - id:  cities
-          uri: http://localhost:8083
+          uri: lb://CITIES
           predicates:
-            - Path=api/villes/**
+            - Path=/api/villes/**
+
+      discovery:
+        enabled: true
+      config:
+        enabeld: false
